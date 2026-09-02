@@ -1,0 +1,45 @@
+{
+    "name": "@simone-bianco/process-supervisor-vue",
+    "version": "0.1.0",
+    "description": "Framework-neutral Vue controls for process-supervisor-python",
+    "type": "module",
+    "main": "./dist/process-supervisor-vue.js",
+    "module": "./dist/process-supervisor-vue.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/process-supervisor-vue.js"
+        },
+        "./style.css": "./dist/process-supervisor-vue.css"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "z-docs"
+    ],
+    "scripts": {
+        "build": "vite build",
+        "test": "vitest run",
+        "test:types": "vue-tsc --noEmit -p tsconfig.json"
+    },
+    "peerDependencies": {
+        "vue": "^3.5.0"
+    },
+    "devDependencies": {
+        "@simone-bianco/vue-ui-components": "file:../vue-ui-components",
+        "@tailwindcss/vite": "4.3.3",
+        "@types/node": "24.10.13",
+        "@vitejs/plugin-vue": "6.0.8",
+        "@vue/server-renderer": "3.5.41",
+        "@vue/test-utils": "^2.4.6",
+        "jsdom": "^28.0.0",
+        "tailwindcss": "4.3.3",
+        "typescript": "^5.9.3",
+        "vite": "8.2.1",
+        "vite-plugin-dts": "5.0.3",
+        "vitest": "4.1.10",
+        "vue": "3.5.41",
+        "vue-tsc": "3.3.9"
+    }
+}
