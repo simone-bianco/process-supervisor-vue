@@ -109,16 +109,14 @@ describe("ProcessGroupCard", () => {
     ).toBe(false);
   });
 
-  it("renders scheduler timing as read-only state with Dev Tools guidance", () => {
+  it("renders scheduler timing as read-only runtime state", () => {
     const wrapper = mount(ProcessGroupCard, {
       props: { group: schedulerGroup },
     });
     expect(wrapper.text()).toContain("Next: 01 Sept 2026, 12:01");
     expect(wrapper.text()).not.toContain("2026-09-01T12:01:00+02:00");
     expect(wrapper.text()).toContain("* * * * *");
-    expect(wrapper.text()).toContain(
-      "Configure schedule timing from Dev Tools settings.",
-    );
+    expect(wrapper.text()).not.toContain("Dev Tools");
     expect(wrapper.text()).not.toContain("Test queue");
     expect(wrapper.text()).not.toContain("Test Reverb");
     expect(wrapper.find("input").exists()).toBe(false);
@@ -172,8 +170,6 @@ describe("ProcessGroupCard", () => {
     }
   });
 });
-
-
 
 describe("SupervisorStatusBanner", () => {
   it("keeps one stable fixed-layout root while status changes to recovery", async () => {

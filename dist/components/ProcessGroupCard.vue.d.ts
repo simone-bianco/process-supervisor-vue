@@ -1,8 +1,11 @@
+import { SupervisorLocale } from '../presentation';
 import { ProcessGroupView } from '../types';
 type __VLS_Props = {
     readonly group: ProcessGroupView;
     readonly processingAction?: string | null;
     readonly controlsDisabled?: boolean;
+    readonly locale?: SupervisorLocale;
+    readonly showProbeControls?: boolean;
 };
 declare const __VLS_export: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     start: (groupId: string) => any;
@@ -15,8 +18,10 @@ declare const __VLS_export: import('vue').DefineComponent<__VLS_Props, {}, {}, {
     onRestart?: (groupId: string) => any;
     onProbe?: (groupId: string) => any;
 }>, {
+    readonly locale: SupervisorLocale;
     readonly processingAction: string | null;
     readonly controlsDisabled: boolean;
+    readonly showProbeControls: boolean;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;
 export default _default;

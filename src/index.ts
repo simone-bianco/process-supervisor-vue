@@ -4,19 +4,26 @@ export { default as SupervisorOverview } from "./components/SupervisorOverview.v
 export { default as SupervisorStatusBanner } from "./components/SupervisorStatusBanner.vue";
 
 export {
-    formatDateTime,
-    formatDuration,
-    instanceColor,
-    summaryLabel,
-    summaryTone,
+  formatDateTime,
+  formatDuration,
+  instanceColor,
+  presentationFor,
+  supervisorPresentation,
+  summaryLabel,
+  summaryTone,
 } from "./presentation";
 
 export type {
-    ProcessGroupView,
-    ProcessInstanceState,
-    ProcessInstanceView,
-    ProcessKind,
-    SupervisorAction,
-    SupervisorStatusView,
-    SupervisorSummary,
+  SupervisorLocale,
+  SupervisorPresentationStrings,
+} from "./presentation";
+
+export type {
+  ProcessGroupView,
+  ProcessInstanceState,
+  ProcessInstanceView,
+  ProcessKind,
+  SupervisorAction,
+  SupervisorStatusView,
+  SupervisorSummary,
 } from "./types";

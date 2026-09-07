@@ -5,8 +5,10 @@ import {
   FeedbackBanner,
   SectionPanel,
 } from "@simone-bianco/vue-ui-components";
+import { computed } from "vue";
 import ProcessInstanceTable from "./ProcessInstanceTable.vue";
-import { formatDateTime } from "../presentation";
+import { formatDateTime, presentationFor } from "../presentation";
+import type { SupervisorLocale } from "../presentation";
 import type { ProcessGroupView } from "../types";
 
 const props = withDefaults(
@@ -14,9 +16,18 @@ const props = withDefaults(
     readonly group: ProcessGroupView;
     readonly processingAction?: string | null;
     readonly controlsDisabled?: boolean;
+    readonly locale?: SupervisorLocale;
+    readonly showProbeControls?: boolean;
   }>(),
-  { processingAction: null, controlsDisabled: false },
+  {
+    processingAction: null,
+    controlsDisabled: false,
+    locale: "en",
+    showProbeControls: true,
+  },
 );
+
+const strings = computed(() => presentationFor(props.locale));
 
 const emit = defineEmits<{
   start: [groupId: string];
@@ -26,9 +37,7 @@ const emit = defineEmits<{
 }>();
 
 function kindLabel(): string {
-  if (props.group.kind === "queue_once") return "queue · one-shot";
-  if (props.group.kind === "scheduler") return "scheduler · cron";
-  return "reverb";
+  return strings.value.groupKinds[props.group.kind];
 }
 </script>
 
@@ -39,7 +48,8 @@ function kindLabel(): string {
         <Badge :label="kindLabel()" color="neutral" />
         <Button
           v-if="
-            props.group.kind === 'queue_once' || props.group.kind === 'reverb'
+            props.showProbeControls &&
+            (props.group.kind === 'queue_once' || props.group.kind === 'reverb')
           "
           size="sm"
           variant="secondary"
@@ -51,7 +61,11 @@ function kindLabel(): string {
           "
           @click="emit('probe', props.group.id)"
         >
-          {{ props.group.kind === "reverb" ? "Test Reverb" : "Test queue" }}
+          {{
+            props.group.kind === "reverb"
+              ? strings.actions.probeReverb
+              : strings.actions.probeQueue
+          }}
         </Button>
         <Button
           v-if="props.group.can_start"
@@ -61,7 +75,7 @@ function kindLabel(): string {
           :disabled="props.controlsDisabled || processingAction !== null"
           @click="emit('start', props.group.id)"
         >
-          Start
+          {{ strings.actions.start }}
         </Button>
         <Button
           v-if="props.group.can_restart"
@@ -71,7 +85,7 @@ function kindLabel(): string {
           :disabled="props.controlsDisabled || processingAction !== null"
           @click="emit('restart', props.group.id)"
         >
-          Restart
+          {{ strings.actions.restart }}
         </Button>
         <Button
           v-if="props.group.can_stop"
@@ -81,16 +95,16 @@ function kindLabel(): string {
           :disabled="props.controlsDisabled || processingAction !== null"
           @click="emit('stop', props.group.id)"
         >
-          Stop
+          {{ strings.actions.stop }}
         </Button>
       </div>
     </template>
 
     <div class="space-y-4">
       <FeedbackBanner
-        v-if="props.group.capability_message"
+        v-if="props.group.kind === 'scheduler' || props.group.capability_message"
         tone="info"
-        :message="props.group.capability_message"
+        :message="props.group.capability_message ?? strings.schedulerNotice(props.group.timezone ?? 'UTC')"
         :dismissible="false"
       />
 
@@ -102,12 +116,10 @@ function kindLabel(): string {
           <p
             class="text-xs font-semibold tracking-wide text-ui-muted-foreground uppercase"
           >
-            Desired capacity
+            {{ strings.desiredCapacity }}
           </p>
           <p class="mt-1 text-sm font-medium text-ui-foreground">
-            {{ props.group.desired_processes }} process{{
-              props.group.desired_processes === 1 ? "" : "es"
-            }}
+            {{ strings.processCount(props.group.desired_processes) }}
           </p>
         </div>
 
@@ -115,13 +127,10 @@ function kindLabel(): string {
           <p
             class="text-xs font-semibold tracking-wide text-ui-muted-foreground uppercase"
           >
-            Configured limit
+            {{ strings.configuredLimit }}
           </p>
           <p class="mt-1 text-sm font-medium text-ui-foreground">
-            {{ props.group.max_processes }} process{{
-              props.group.max_processes === 1 ? "" : "es"
-            }}
-            max
+            {{ strings.processCountMax(props.group.max_processes) }}
           </p>
         </div>
       </div>
@@ -134,11 +143,13 @@ function kindLabel(): string {
           <p
             class="text-xs font-semibold tracking-wide text-ui-muted-foreground uppercase"
           >
-            Scheduler state
+            {{ strings.schedulerState }}
           </p>
           <div class="mt-1 flex flex-wrap items-center gap-2">
             <Badge
-              :label="props.group.desired_processes > 0 ? 'On' : 'Off'"
+              :label="
+                props.group.desired_processes > 0 ? strings.on : strings.off
+              "
               :color="props.group.desired_processes > 0 ? 'success' : 'neutral'"
               variant="soft"
               size="xs"
@@ -147,9 +158,14 @@ function kindLabel(): string {
               v-if="props.group.next_run_at"
               class="text-xs text-ui-muted-foreground"
             >
-              Next:
+              {{ strings.nextRun }}:
               {{
-                formatDateTime(props.group.next_run_at, props.group.timezone)
+                formatDateTime(
+                  props.group.next_run_at,
+                  props.group.timezone,
+                  false,
+                  props.locale,
+                )
               }}
             </span>
           </div>
@@ -157,17 +173,14 @@ function kindLabel(): string {
 
         <div class="min-w-0">
           <p class="text-xs font-medium text-ui-muted-foreground">
-            Cron expression ·
-            {{ props.group.timezone ?? "application timezone" }}
+            {{ strings.cronExpression }} ·
+            {{ props.group.timezone ?? strings.applicationTimezone }}
           </p>
           <code
             class="mt-1 block truncate text-sm font-medium text-ui-foreground"
           >
             {{ props.group.cron ?? "* * * * *" }}
           </code>
-          <p class="mt-1 text-xs text-ui-muted-foreground">
-            Configure schedule timing from Dev Tools settings.
-          </p>
         </div>
       </div>
 
@@ -179,15 +192,22 @@ function kindLabel(): string {
           <p
             class="text-xs font-semibold tracking-wide text-ui-muted-foreground uppercase"
           >
-            Desired state
+            {{ strings.desiredState }}
           </p>
           <p class="mt-1 text-sm font-medium text-ui-foreground">
-            {{ props.group.desired_processes > 0 ? "Running" : "Stopped" }}
+            {{
+              props.group.desired_processes > 0
+                ? strings.running
+                : strings.stopped
+            }}
           </p>
         </div>
       </div>
 
-      <ProcessInstanceTable :instances="props.group.instances" />
+      <ProcessInstanceTable
+        :instances="props.group.instances"
+        :locale="props.locale"
+      />
     </div>
   </SectionPanel>
 </template>

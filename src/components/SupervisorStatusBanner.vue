@@ -7,28 +7,36 @@ import {
   Info,
   XCircle,
 } from "lucide-vue-next";
-import { formatDateTime, summaryLabel } from "../presentation";
+import { formatDateTime, presentationFor, summaryLabel } from "../presentation";
+import type { SupervisorLocale } from "../presentation";
 import type { SupervisorStatusView } from "../types";
 
 const props = defineProps<{
   readonly status: SupervisorStatusView;
+  readonly locale?: SupervisorLocale;
 }>();
+
+const locale = computed(() => props.locale ?? "en");
+const strings = computed(() => presentationFor(locale.value));
 
 const message = computed(() => {
   if (!props.status.enabled) {
-    return "Process supervision is disabled for this installation.";
+    return strings.value.disabledMessage;
   }
   if (props.status.reason_code) {
-    return `Runtime reason: ${props.status.reason_code}.`;
+    return strings.value.reason(props.status.reason_code);
   }
   if (props.status.heartbeat_at) {
-    return `Last heartbeat: ${formatDateTime(
-      props.status.heartbeat_at,
-      props.status.timezone,
-      true,
-    )}.`;
+    return strings.value.lastHeartbeat(
+      formatDateTime(
+        props.status.heartbeat_at,
+        props.status.timezone,
+        true,
+        locale.value,
+      ),
+    );
   }
-  return "Runtime state is available, but no heartbeat has been published yet.";
+  return strings.value.noHeartbeat;
 });
 
 const danger = computed(
@@ -81,7 +89,7 @@ const accentClass = computed(() => {
     class="grid min-h-[5.25rem] w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-3 rounded-xl border px-4 py-3 shadow-sm"
     :class="panelClass"
     :role="danger ? 'alert' : 'status'"
-    aria-label="Process Supervisor status"
+    :aria-label="strings.supervisorStatusAriaLabel"
     data-supervisor-status-banner
   >
     <component
@@ -92,7 +100,7 @@ const accentClass = computed(() => {
     />
     <div class="min-w-0">
       <strong class="block text-sm font-semibold text-ui-foreground">
-        Laravel process supervisor
+        {{ strings.supervisorTitle }}
       </strong>
       <p class="mt-0.5 text-[0.8125rem] leading-5 text-ui-muted-foreground">
         {{ message }}
@@ -106,7 +114,7 @@ const accentClass = computed(() => {
             class="h-1.5 w-1.5 rounded-full bg-current"
             aria-hidden="true"
           />
-          {{ summaryLabel(props.status.summary) }}
+          {{ summaryLabel(props.status.summary, locale) }}
         </span>
         <span class="font-mono text-xs text-ui-muted-foreground">
           {{ props.status.platform }}

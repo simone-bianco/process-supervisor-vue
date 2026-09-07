@@ -5,57 +5,64 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@simone-bianco/vue-ui-components";
-import { formatDuration, instanceColor } from "../presentation";
+import {
+  formatDuration,
+  instanceColor,
+  presentationFor,
+} from "../presentation";
+import type { SupervisorLocale } from "../presentation";
 import type { ProcessInstanceState, ProcessInstanceView } from "../types";
 
 const props = defineProps<{
   readonly instances: readonly ProcessInstanceView[];
+  readonly locale?: SupervisorLocale;
 }>();
 
-const columns: DataTableColumn[] = [
+const strings = computed(() => presentationFor(props.locale ?? "en"));
+const columns = computed<DataTableColumn[]>(() => [
   {
     key: "slot_label",
-    label: "Slot",
-    class: "md:w-20 md:flex-none",
-    headerClass: "w-20 flex-none",
+    label: strings.value.slot,
+    class: "md:w-12 md:flex-none",
+    headerClass: "w-12 flex-none",
   },
   {
     key: "state",
-    label: "State",
-    class: "md:w-36 md:flex-none",
-    headerClass: "w-36 flex-none",
+    label: strings.value.state,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
   {
     key: "pid_label",
-    label: "PID",
-    class: "md:w-24 md:flex-none",
-    headerClass: "w-24 flex-none",
+    label: strings.value.pid,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
   {
     key: "uptime",
-    label: "Uptime",
-    class: "md:w-28 md:flex-none",
-    headerClass: "w-28 flex-none",
+    label: strings.value.uptime,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
   {
     key: "restart_count",
-    label: "Restarts",
-    class: "md:w-24 md:flex-none",
-    headerClass: "w-24 flex-none",
+    label: strings.value.restarts,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
   {
     key: "exit_label",
-    label: "Last exit",
-    class: "md:w-24 md:flex-none",
-    headerClass: "w-24 flex-none",
+    label: strings.value.lastExit,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
   {
     key: "error_label",
-    label: "Last error",
-    class: "md:min-w-48 md:flex-1",
-    headerClass: "min-w-48 flex-1",
+    label: strings.value.lastError,
+    class: "md:min-w-0 md:flex-1",
+    headerClass: "min-w-0 flex-1 break-words",
   },
-];
+]);
 
 const rows = computed<Record<string, unknown>[]>(() =>
   props.instances.map((instance) => ({
@@ -104,7 +111,7 @@ function state(value: unknown): ProcessInstanceState {
   >
     <template #cell-state="{ value }">
       <Badge
-        :label="state(value)"
+        :label="strings.instanceStates[state(value)]"
         :color="instanceColor(state(value))"
         variant="soft"
         size="xs"
@@ -134,7 +141,7 @@ function state(value: unknown): ProcessInstanceState {
     </template>
     <template #empty>
       <p class="text-sm text-ui-muted-foreground">
-        No process instance is currently active.
+        {{ strings.emptyInstances }}
       </p>
     </template>
   </DataTable>
