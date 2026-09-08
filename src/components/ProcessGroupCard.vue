@@ -42,7 +42,10 @@ function kindLabel(): string {
 </script>
 
 <template>
-  <SectionPanel :title="props.group.label">
+  <SectionPanel
+    :title="props.group.label"
+    :ui="{ root: 'min-w-0', header: 'flex-wrap', title: 'min-w-0', content: 'min-w-0' }"
+  >
     <template #header-actions>
       <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
         <Badge :label="kindLabel()" color="neutral" />

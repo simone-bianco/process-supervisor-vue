@@ -69,6 +69,7 @@ export declare const supervisorPresentation: {
             queue_once: string;
             scheduler: string;
             reverb: string;
+            artisan_service: string;
         };
         instanceStates: {
             stopped: string;
@@ -135,6 +136,7 @@ export declare const supervisorPresentation: {
             queue_once: string;
             scheduler: string;
             reverb: string;
+            artisan_service: string;
         };
         instanceStates: {
             stopped: string;

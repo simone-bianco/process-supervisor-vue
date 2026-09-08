@@ -3686,7 +3686,8 @@ var Er = {
 		groupKinds: {
 			queue_once: "queue · one-shot",
 			scheduler: "scheduler · cron",
-			reverb: "reverb"
+			reverb: "reverb",
+			artisan_service: "service · singleton"
 		},
 		instanceStates: {
 			stopped: "stopped",
@@ -3752,7 +3753,8 @@ var Er = {
 		groupKinds: {
 			queue_once: "coda · esecuzione singola",
 			scheduler: "scheduler · cron",
-			reverb: "reverb"
+			reverb: "reverb",
+			artisan_service: "servizio · istanza singola"
 		},
 		instanceStates: {
 			stopped: "arrestato",
@@ -3945,7 +3947,15 @@ var jr = { class: "font-mono text-xs" }, Mr = { class: "font-mono text-xs text-u
 		function f() {
 			return u.value.groupKinds[n.group.kind];
 		}
-		return (t, r) => (b(), i(E(tr), { title: n.group.label }, {
+		return (t, r) => (b(), i(E(tr), {
+			title: n.group.label,
+			ui: {
+				root: "min-w-0",
+				header: "flex-wrap",
+				title: "min-w-0",
+				content: "min-w-0"
+			}
+		}, {
 			"header-actions": k(() => [s("div", Lr, [
 				l(E(Kn), {
 					label: f(),

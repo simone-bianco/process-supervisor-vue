@@ -78,6 +78,7 @@ export const supervisorPresentation = {
       queue_once: "queue · one-shot",
       scheduler: "scheduler · cron",
       reverb: "reverb",
+      artisan_service: "service · singleton",
     },
     instanceStates: {
       stopped: "stopped",
@@ -148,6 +149,7 @@ export const supervisorPresentation = {
       queue_once: "coda · esecuzione singola",
       scheduler: "scheduler · cron",
       reverb: "reverb",
+      artisan_service: "servizio · istanza singola",
     },
     instanceStates: {
       stopped: "arrestato",

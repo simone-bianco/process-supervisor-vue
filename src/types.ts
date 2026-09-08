@@ -8,7 +8,7 @@ export type SupervisorSummary =
   | "recovery_required"
   | "unsupported";
 
-export type ProcessKind = "queue_once" | "reverb" | "scheduler";
+export type ProcessKind = "queue_once" | "reverb" | "scheduler" | "artisan_service";
 
 export type ProcessInstanceState =
   | "stopped"

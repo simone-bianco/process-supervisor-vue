@@ -1,5 +1,5 @@
 export type SupervisorSummary = "disabled" | "stopped" | "starting" | "ready" | "degraded" | "stopping" | "recovery_required" | "unsupported";
-export type ProcessKind = "queue_once" | "reverb" | "scheduler";
+export type ProcessKind = "queue_once" | "reverb" | "scheduler" | "artisan_service";
 export type ProcessInstanceState = "stopped" | "starting" | "running" | "idle" | "stopping" | "backoff" | "fatal" | "uncertain";
 export interface ProcessInstanceView {
     readonly id: string;
