@@ -14,12 +14,14 @@ const props = withDefaults(
     readonly processingAction?: string | null;
     readonly locale?: SupervisorLocale;
     readonly showProbeControls?: boolean;
+    readonly controlsDisabled?: boolean;
   }>(),
   {
     processingGroupId: null,
     processingAction: null,
     locale: "en",
     showProbeControls: true,
+    controlsDisabled: false,
   },
 );
 
@@ -31,6 +33,7 @@ const emit = defineEmits<{
   start: [groupId: string];
   stop: [groupId: string];
   restart: [groupId: string];
+  probe: [groupId: string];
 }>();
 
 function actionFor(groupId: string): string | null {
@@ -73,9 +76,11 @@ function actionFor(groupId: string): string | null {
         :processing-action="actionFor(group.id)"
         :locale="props.locale"
         :show-probe-controls="props.showProbeControls"
+        :controls-disabled="props.controlsDisabled"
         @start="emit('start', $event)"
         @stop="emit('stop', $event)"
         @restart="emit('restart', $event)"
+        @probe="emit('probe', $event)"
       />
     </div>
 
